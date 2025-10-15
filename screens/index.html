@@ -9,7 +9,6 @@
     <style>
         body {
             padding: 3rem 1.5rem;
-            background: linear-gradient(135deg, #FF4A04 0%, #FF6B35 50%, #FBAE41 100%);
             min-height: 100vh;
         }
 
@@ -21,7 +20,14 @@
         .navigator-header {
             text-align: center;
             margin-bottom: 3rem;
-            color: white;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .navigator-header h1 {
@@ -32,7 +38,7 @@
 
         .navigator-header p {
             font-size: 1.25rem;
-            opacity: 0.95;
+            color: var(--text-secondary);
         }
 
         .screen-section {
@@ -42,10 +48,15 @@
         .section-title {
             font-size: 1.75rem;
             font-weight: bold;
-            color: white;
+            color: var(--text-primary);
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
 
         .screen-grid {
@@ -55,15 +66,19 @@
         }
 
         .screen-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius-md);
             padding: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.2s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
         }
 
         .screen-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .screen-icon {
@@ -324,6 +339,9 @@
             </div>
         </footer>
     </div>
+
+    <!-- Animated Background -->
+    <script src="shared/animated-bg.js"></script>
 
     <!-- UI Debug Tool -->
     <script src="shared/debug-tool.js"></script>
