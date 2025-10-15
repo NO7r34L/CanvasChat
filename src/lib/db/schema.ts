@@ -1,5 +1,5 @@
 import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
-import { usersSync as usersTable } from "drizzle-orm/neon";
+import { users as usersTable } from "./auth-schema";
 
 export { usersTable };
 

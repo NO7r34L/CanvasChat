@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-function SignInForm() {
+export default function SignUpPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/canvas";
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,22 +22,28 @@ function SignInForm() {
     setError("");
     setLoading(true);
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("/api/auth/signin", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name }),
       });
 
       const data = await response.json() as { error?: string; success?: boolean };
 
       if (!response.ok) {
-        setError(data.error || "Sign in failed");
+        setError(data.error || "Sign up failed");
         setLoading(false);
         return;
       }
 
-      router.push(callbackUrl);
+      router.push("/canvas");
       router.refresh();
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -50,8 +55,8 @@ function SignInForm() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>Sign in to your Canvas Chat account</CardDescription>
+          <CardTitle>Sign Up</CardTitle>
+          <CardDescription>Create your Canvas Chat account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -60,6 +65,17 @@ function SignInForm() {
                 {error}
               </div>
             )}
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -77,21 +93,22 @@ function SignInForm() {
               <Input
                 id="password"
                 type="password"
+                placeholder="At least 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Sign Up"}
             </Button>
             <div className="text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/auth/signup" className="text-primary hover:underline">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/auth/signin" className="text-primary hover:underline">
+                Sign in
               </Link>
             </div>
           </CardFooter>
@@ -101,14 +118,3 @@ function SignInForm() {
   );
 }
 
-export default function SignInPage() {
-  return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
-    }>
-      <SignInForm />
-    </Suspense>
-  );
-}

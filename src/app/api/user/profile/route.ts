@@ -1,18 +1,28 @@
 import { NextResponse } from "next/server";
-import { stackServerApp } from "@/lib/stack/server";
+import { getUserFromToken } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 /**
- * Example API route for fetching user profile
- * This demonstrates the pattern for creating API routes that work with TanStack Query
+ * JWT-based user profile API
+ * Compatible with Cloudflare Workers Edge Runtime
  */
 
-// Removed edge runtime for OpenNext Cloudflare compatibility
-// export const runtime = "edge";
+export const runtime = "edge";
 
 export async function GET() {
   try {
-    // Get authenticated user
-    const user = await stackServerApp.getUser();
+    // Get authenticated user from JWT token
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth-token")?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const user = await getUserFromToken(token);
     
     if (!user) {
       return NextResponse.json(
@@ -22,13 +32,12 @@ export async function GET() {
     }
 
     // Return user profile data
-    // In a real app, you might fetch additional data from the database here
     return NextResponse.json({
       id: user.id,
-      displayName: user.displayName,
-      primaryEmail: user.primaryEmail,
-      profileImageUrl: user.profileImageUrl,
-      createdAt: new Date().toISOString(), // user.createdAt not available in CurrentServerUser
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      emailVerified: user.emailVerified,
     });
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -41,7 +50,17 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const user = await stackServerApp.getUser();
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth-token")?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const user = await getUserFromToken(token);
     
     if (!user) {
       return NextResponse.json(
