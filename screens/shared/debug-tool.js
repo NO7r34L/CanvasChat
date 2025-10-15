@@ -9,7 +9,7 @@
     // Create toggle button
     const button = document.createElement('button');
     button.id = 'debug-toggle';
-    button.innerHTML = '🔲 Toggle Outlines';
+    button.innerHTML = 'Toggle Outlines';
     button.style.cssText = `
         position: fixed;
         bottom: 20px;
@@ -93,7 +93,7 @@
                 el.setAttribute('data-debug-tag', el.tagName.toLowerCase());
             });
             
-            button.innerHTML = '✅ Outlines ON';
+            button.innerHTML = 'Outlines ON';
             button.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
         } else {
             // Remove styles
@@ -102,7 +102,7 @@
                 style.remove();
             }
             
-            button.innerHTML = '🔲 Toggle Outlines';
+            button.innerHTML = 'Toggle Outlines';
             button.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
     };
