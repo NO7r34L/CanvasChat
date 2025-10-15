@@ -8,18 +8,14 @@ import type { NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    "/",                    // Landing page
-    "/auth/signin",
-    "/auth/signup",
-    "/api/auth",
-  ];
-  const isPublicRoute = publicRoutes.some((route) => 
-    route === "/" ? pathname === "/" : pathname.startsWith(route)
-  );
-
-  if (isPublicRoute) {
+  // Immediately allow all public routes - check this FIRST
+  if (
+    pathname === "/" ||                          // Landing page
+    pathname.startsWith("/auth/") ||             // Auth pages
+    pathname.startsWith("/api/auth") ||          // Auth API
+    pathname.startsWith("/_next/") ||            // Next.js internal
+    pathname.includes(".")                       // Static files (has extension)
+  ) {
     return NextResponse.next();
   }
 
@@ -37,20 +33,19 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Use negative lookahead to exclude public paths
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
-     * - / (root/landing page)
+     * Match all request paths except for the ones starting with:
+     * - / (root)
+     * - auth (auth pages)
      * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - _next/data (data fetching)
-     * - favicon.ico (favicon)
-     * - auth pages
-     * - api/auth routes
-     * - public assets (png, jpg, svg, etc.)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files with extensions
      */
-    "/((?!$|_next/static|_next/image|_next/data|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)|auth|api/auth).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.).*)",
   ],
 };
 
