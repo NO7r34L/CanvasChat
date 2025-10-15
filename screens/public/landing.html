@@ -191,16 +191,18 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="landing.html" class="logo">
-                <img src="../shared/assets/CanvasChat.logowithtext.png" alt="CanvasChat" style="height: 150px;">
-            </a>
-            <div class="flex gap-2">
-                <a href="login.html" class="btn btn-ghost">Sign In</a>
-                <a href="signup.html" class="btn btn-primary">Get Started</a>
-            </div>
+    <!-- Logo (Outside Header) -->
+    <div style="position: fixed; top: 2rem; left: 2rem; z-index: 400;">
+        <a href="landing.html" class="logo">
+            <img src="../shared/assets/CanvasChat.logowithtext.png" alt="CanvasChat" style="height: 200px;">
+        </a>
+    </div>
+
+    <!-- Header (Nav Only) -->
+    <header class="header" style="display: flex; justify-content: flex-end; padding: 2rem 2rem;">
+        <div class="flex gap-2">
+            <a href="login.html" class="btn btn-ghost" style="padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.875rem;">Sign In</a>
+            <a href="signup.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.875rem;">Get Started</a>
         </div>
     </header>
 
