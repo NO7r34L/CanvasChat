@@ -1,120 +1,317 @@
 "use client";
 
 import { useState } from "react";
-import { useUserProfile, useUpdateProfile } from "@/hooks/use-user-profile";
+import type { User } from "@stackframe/stack";
+import { useRouter } from "next/navigation";
+import {
+  User as UserIcon,
+  Mail,
+  Bell,
+  Shield,
+  Trash2,
+  Save,
+  Sparkles,
+  Grid3x3,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useCanvasStore } from "@/stores/canvas-store";
+import { useUIStore } from "@/stores/ui-store";
 
-/**
- * Example component demonstrating TanStack Query usage
- * Shows loading states, error handling, and mutations
- */
-export function ProfileSettings() {
-  const [displayName, setDisplayName] = useState("");
-  
-  // Using TanStack Query for data fetching
-  const { data: profile, isLoading, error } = useUserProfile();
-  
-  // Using TanStack Query mutation for updates
-  const updateProfile = useUpdateProfile();
+interface ProfileSettingsProps {
+  user: User;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateProfile.mutate({ displayName });
+export function ProfileSettings({ user }: ProfileSettingsProps) {
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState(user.displayName || "");
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Get preferences from stores
+  const { animationEnabled, toggleAnimation, autoSaveEnabled, setAutoSave } = useCanvasStore();
+  const [gridSnap, setGridSnap] = useState(true);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    try {
+      // TODO: Implement profile update API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-4 w-48" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
+  const handleDeleteAccount = async () => {
+    // TODO: Implement account deletion
+    await user.signOut();
+    router.push("/");
+  };
 
-  // Error state
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Failed to load profile: {error.message}
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (!profile) return null;
+  const getInitials = () => {
+    if (displayName) {
+      return displayName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    }
+    return user.primaryEmail?.[0]?.toUpperCase() || "U";
+  };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Profile Settings</CardTitle>
-        <CardDescription>
-          Update your profile information
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="displayName">Display Name</Label>
-            <Input
-              id="displayName"
-              value={displayName || profile.displayName || ""}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Enter your name"
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold">Settings</h1>
+        <p className="text-muted-foreground">
+          Manage your account settings and preferences
+        </p>
+      </div>
+
+      {/* Profile Information */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <UserIcon className="h-5 w-5" />
+            <CardTitle>Profile Information</CardTitle>
+          </div>
+          <CardDescription>
+            Update your profile details and avatar
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center gap-6">
+            <Avatar className="h-20 w-20">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-lg">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
+            <Button variant="outline" size="sm">
+              Change Avatar
+            </Button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="displayName">Display Name</Label>
+              <Input
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Enter your name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="flex gap-2">
+                <Mail className="mt-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  value={user.primaryEmail || ""}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Email cannot be changed
+              </p>
+            </div>
+
+            <Button onClick={handleSaveProfile} disabled={isSaving}>
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Preferences */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5" />
+            <CardTitle>Preferences</CardTitle>
+          </div>
+          <CardDescription>
+            Customize your canvas experience
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="animations">Enable Animations</Label>
+              <p className="text-sm text-muted-foreground">
+                Smooth animations when adding objects
+              </p>
+            </div>
+            <Switch
+              id="animations"
+              checked={animationEnabled}
+              onCheckedChange={toggleAnimation}
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={profile.primaryEmail || ""}
-              disabled
-              className="bg-muted"
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="autosave">Auto-Save</Label>
+              <p className="text-sm text-muted-foreground">
+                Automatically save your work every 30 seconds
+              </p>
+            </div>
+            <Switch
+              id="autosave"
+              checked={autoSaveEnabled}
+              onCheckedChange={setAutoSave}
             />
-            <p className="text-xs text-muted-foreground">
-              Email cannot be changed
-            </p>
           </div>
 
-          <Button 
-            type="submit" 
-            disabled={updateProfile.isPending}
-            className="w-full"
-          >
-            {updateProfile.isPending ? "Saving..." : "Save Changes"}
-          </Button>
+          <Separator />
 
-          {updateProfile.isSuccess && (
-            <Alert>
-              <AlertDescription>
-                Profile updated successfully!
-              </AlertDescription>
-            </Alert>
-          )}
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="grid">Grid Snap</Label>
+              <p className="text-sm text-muted-foreground">
+                Snap objects to grid when moving
+              </p>
+            </div>
+            <Switch
+              id="grid"
+              checked={gridSnap}
+              onCheckedChange={setGridSnap}
+            />
+          </div>
 
-          {updateProfile.isError && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Failed to update profile. Please try again.
-              </AlertDescription>
-            </Alert>
-          )}
-        </form>
-      </CardContent>
-    </Card>
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="notifications">Email Notifications</Label>
+              <p className="text-sm text-muted-foreground">
+                Receive updates about your canvases
+              </p>
+            </div>
+            <Switch
+              id="notifications"
+              checked={emailNotifications}
+              onCheckedChange={setEmailNotifications}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Security */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            <CardTitle>Security</CardTitle>
+          </div>
+          <CardDescription>
+            Manage your account security settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div>
+              <p className="font-medium">Change Password</p>
+              <p className="text-sm text-muted-foreground">
+                Update your password regularly
+              </p>
+            </div>
+            <Button variant="outline">Change</Button>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div>
+              <p className="font-medium">Two-Factor Authentication</p>
+              <p className="text-sm text-muted-foreground">
+                Add an extra layer of security
+              </p>
+            </div>
+            <Button variant="outline">Enable</Button>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div>
+              <p className="font-medium">Active Sessions</p>
+              <p className="text-sm text-muted-foreground">
+                Manage your active sessions
+              </p>
+            </div>
+            <Button variant="outline">View</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
+      <Card className="border-destructive">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-destructive" />
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+          </div>
+          <CardDescription>
+            Irreversible actions for your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Account
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove all your data including canvases,
+                  comments, and collaborations.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete Account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

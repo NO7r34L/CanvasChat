@@ -6,7 +6,7 @@ import type { Canvas, Object as FabricObject } from "fabric";
  * Manages canvas state, tools, and animation settings for the canvas chat
  */
 
-export type CanvasTool = "select" | "draw" | "text" | "shape" | "erase";
+export type CanvasTool = "select" | "draw" | "text" | "shape" | "erase" | "comment";
 
 interface CanvasStore {
   // Canvas instance
@@ -43,6 +43,21 @@ interface CanvasStore {
   setCanUndo: (can: boolean) => void;
   setCanRedo: (can: boolean) => void;
 
+  // Canvas save/load state
+  currentCanvasId: number | null;
+  currentCanvasTitle: string;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  autoSaveEnabled: boolean;
+
+  // Actions
+  setCurrentCanvasId: (id: number | null) => void;
+  setCurrentCanvasTitle: (title: string) => void;
+  saveCanvas: () => Promise<void>;
+  loadCanvas: (id: number) => Promise<void>;
+  createNewCanvas: () => Promise<void>;
+  setAutoSave: (enabled: boolean) => void;
+  
   // Clear canvas
   clearCanvas: () => void;
 }
@@ -106,6 +121,97 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
   canRedo: false,
   setCanUndo: (can) => set({ canUndo: can }),
   setCanRedo: (can) => set({ canRedo: can }),
+
+  // Canvas save/load
+  currentCanvasId: null,
+  currentCanvasTitle: "Untitled Canvas",
+  isSaving: false,
+  lastSaved: null,
+  autoSaveEnabled: true,
+
+  setCurrentCanvasId: (id) => set({ currentCanvasId: id }),
+  setCurrentCanvasTitle: (title) => set({ currentCanvasTitle: title }),
+  setAutoSave: (enabled) => set({ autoSaveEnabled: enabled }),
+
+  saveCanvas: async () => {
+    const { canvas, currentCanvasId, currentCanvasTitle } = get();
+    if (!canvas) return;
+
+    set({ isSaving: true });
+
+    try {
+      const fabricData = JSON.stringify(canvas.toJSON());
+      const thumbnail = canvas.toDataURL({ format: "png", quality: 0.5 });
+
+      const response = await fetch(
+        currentCanvasId ? `/api/canvas/${currentCanvasId}` : "/api/canvas",
+        {
+          method: currentCanvasId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: currentCanvasTitle,
+            fabricData,
+            thumbnail,
+            width: canvas.width,
+            height: canvas.height,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to save canvas");
+
+      const data = await response.json();
+      set({
+        currentCanvasId: data.id,
+        lastSaved: new Date(),
+      });
+    } catch (error) {
+      console.error("Error saving canvas:", error);
+      throw error;
+    } finally {
+      set({ isSaving: false });
+    }
+  },
+
+  loadCanvas: async (id) => {
+    const { canvas } = get();
+    if (!canvas) return;
+
+    try {
+      const response = await fetch(`/api/canvas/${id}`);
+      if (!response.ok) throw new Error("Failed to load canvas");
+
+      const data = await response.json();
+
+      // Clear current canvas
+      canvas.clear();
+
+      // Load canvas data
+      canvas.loadFromJSON(JSON.parse(data.fabricData), () => {
+        canvas.renderAll();
+        set({
+          currentCanvasId: data.id,
+          currentCanvasTitle: data.title,
+          lastSaved: new Date(data.updatedAt),
+        });
+      });
+    } catch (error) {
+      console.error("Error loading canvas:", error);
+      throw error;
+    }
+  },
+
+  createNewCanvas: async () => {
+    const { canvas } = get();
+    if (!canvas) return;
+
+    canvas.clear();
+    set({
+      currentCanvasId: null,
+      currentCanvasTitle: "Untitled Canvas",
+      lastSaved: null,
+    });
+  },
 
   // Clear
   clearCanvas: () => {

@@ -296,3 +296,44 @@ export function createTimeline() {
   });
 }
 
+/**
+ * Export canvas as PNG blob
+ */
+export async function exportCanvasAsPNG(canvas: Canvas): Promise<Blob> {
+  const dataUrl = canvas.toDataURL({ format: "png", quality: 1 });
+  const response = await fetch(dataUrl);
+  return response.blob();
+}
+
+/**
+ * Export canvas as SVG string
+ */
+export function exportCanvasAsSVG(canvas: Canvas): string {
+  return canvas.toSVG();
+}
+
+/**
+ * Export canvas as JSON string
+ */
+export function exportCanvasAsJSON(canvas: Canvas): string {
+  return JSON.stringify(canvas.toJSON());
+}
+
+/**
+ * Download canvas as file
+ */
+export function downloadCanvas(
+  blob: Blob,
+  filename: string,
+  format: "png" | "svg" | "json"
+) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${filename}.${format}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
