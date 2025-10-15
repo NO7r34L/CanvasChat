@@ -1,8 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  swcMinify: false, // Disable SWC minification
+  compiler: {
+    removeConsole: false,
+  },
   experimental: {
-    serverMinification: false, // Disable to fix __name bundling issues
+    serverMinification: false,
+  },
+  // Disable optimization for Edge Runtime compatibility
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.optimization.minimize = false;
+    }
+    return config;
   },
 }
 
