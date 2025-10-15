@@ -47,7 +47,7 @@ function SignInForm() {
     <>
       <style jsx global>{`
         body {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 50%, var(--accent-purple) 100%);
           min-height: 100vh;
         }
         
@@ -82,28 +82,13 @@ function SignInForm() {
           color: #1F2937;
         }
         
-        .form-input {
-          width: 100%;
-          padding: 0.875rem 1rem;
-          border: 2px solid #E5E7EB;
-          border-radius: 12px;
-          font-size: 1rem;
-          transition: all 0.2s;
-        }
-        
-        .form-input:focus {
-          outline: none;
-          border-color: #6B46C1;
-          box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
-        }
-        
         .btn-primary {
           width: 100%;
           padding: 0.875rem 1.5rem;
-          background: linear-gradient(135deg, #6B46C1 0%, #7C3AED 100%);
+          background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
           color: white;
           border: none;
-          border-radius: 9999px;
+          border-radius: var(--radius-full);
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
@@ -112,7 +97,7 @@ function SignInForm() {
         
         .btn-primary:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 4px 14px 0 rgba(107, 70, 193, 0.4);
+          box-shadow: var(--shadow-purple);
         }
         
         .btn-primary:disabled {
@@ -123,8 +108,8 @@ function SignInForm() {
         .btn-social {
           width: 100%;
           padding: 0.875rem 1rem;
-          border: 2px solid #E5E7EB;
-          border-radius: 9999px;
+          border: 2px solid var(--border-color);
+          border-radius: var(--radius-full);
           background: white;
           cursor: pointer;
           font-size: 1rem;
@@ -138,8 +123,8 @@ function SignInForm() {
         }
         
         .btn-social:hover {
-          background: #F9FAFB;
-          border-color: #6B7280;
+          background: var(--bg-secondary);
+          border-color: var(--text-secondary);
           transform: translateY(-1px);
         }
         
@@ -148,7 +133,7 @@ function SignInForm() {
           align-items: center;
           text-align: center;
           margin: 1.5rem 0;
-          color: #9CA3AF;
+          color: var(--text-muted);
           font-size: 0.875rem;
         }
         
@@ -156,7 +141,7 @@ function SignInForm() {
         .divider::after {
           content: '';
           flex: 1;
-          border-bottom: 1px solid #E5E7EB;
+          border-bottom: 1px solid var(--border-color);
         }
         
         .divider:not(:empty)::before {
@@ -168,10 +153,10 @@ function SignInForm() {
         }
         
         .error-message {
-          background: #FEE2E2;
-          color: #EF4444;
+          background: var(--error-light);
+          color: var(--error);
           padding: 0.875rem 1rem;
-          border-radius: 12px;
+          border-radius: var(--radius-md);
           margin-bottom: 1.5rem;
           font-size: 0.875rem;
         }
@@ -184,23 +169,23 @@ function SignInForm() {
         .auth-header h1 {
           font-size: 2rem;
           margin: 1rem 0 0.5rem;
-          color: #1F2937;
+          color: var(--text-primary);
         }
         
         .auth-header p {
-          color: #6B7280;
+          color: var(--text-secondary);
           font-size: 1rem;
         }
         
         .auth-footer {
           text-align: center;
           margin-top: 2rem;
-          color: #6B7280;
+          color: var(--text-secondary);
           font-size: 0.875rem;
         }
         
         .auth-footer a {
-          color: #6B46C1;
+          color: var(--primary-color);
           text-decoration: none;
           font-weight: 500;
         }
@@ -216,7 +201,7 @@ function SignInForm() {
         }
         
         .forgot-password a {
-          color: #6B46C1;
+          color: var(--primary-color);
           text-decoration: none;
           font-size: 0.875rem;
           font-weight: 500;
@@ -232,7 +217,7 @@ function SignInForm() {
         }
         
         .back-link a {
-          color: #6B46C1;
+          color: var(--primary-color);
           text-decoration: none;
           font-size: 0.875rem;
           font-weight: 500;
