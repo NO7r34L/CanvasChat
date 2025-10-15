@@ -20,7 +20,7 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        z-index: -1;
+        z-index: 0;
         pointer-events: none;
     `;
 
@@ -32,18 +32,19 @@
         left: 0;
         width: 100%;
         height: 100%;
-        backdrop-filter: blur(80px);
-        -webkit-backdrop-filter: blur(80px);
+        backdrop-filter: blur(60px);
+        -webkit-backdrop-filter: blur(60px);
+        z-index: 100;
     `;
 
     // Color palette - subtle grays and whites with hint of purple
     const colors = [
-        'rgba(249, 250, 251, 0.4)',  // Very light gray
-        'rgba(243, 244, 246, 0.5)',  // Light gray
-        'rgba(229, 231, 235, 0.4)',  // Medium gray
-        'rgba(209, 213, 219, 0.3)',  // Darker gray
-        'rgba(107, 70, 193, 0.15)',  // Purple hint
-        'rgba(167, 139, 250, 0.2)',  // Light purple hint
+        'rgba(249, 250, 251, 0.8)',  // Very light gray
+        'rgba(243, 244, 246, 0.9)',  // Light gray
+        'rgba(229, 231, 235, 0.7)',  // Medium gray
+        'rgba(209, 213, 219, 0.6)',  // Darker gray
+        'rgba(107, 70, 193, 0.4)',   // Purple hint
+        'rgba(167, 139, 250, 0.5)',  // Light purple hint
     ];
 
     // Create floating orbs
@@ -66,8 +67,9 @@
             background: radial-gradient(circle at 30% 30%, ${color}, transparent);
             left: ${x}px;
             top: ${y}px;
-            opacity: 0.6;
-            mix-blend-mode: soft-light;
+            opacity: 0.9;
+            mix-blend-mode: normal;
+            filter: blur(40px);
         `;
         
         bgContainer.appendChild(orb);

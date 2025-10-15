@@ -80,6 +80,14 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     line-height: 1.6;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Ensure main content is above animated background */
+body > * {
+    position: relative;
+    z-index: var(--z-base);
 }
 
 /* Header */
