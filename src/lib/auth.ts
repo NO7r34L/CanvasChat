@@ -118,15 +118,24 @@ export async function signIn(
   password: string
 ): Promise<{ token: string; user: any } | null> {
   try {
+    console.log("Auth: Looking up user:", email);
     const [user] = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
 
-    if (!user || !user.password) return null;
+    console.log("Auth: User found:", !!user, "Has password:", !!user?.password);
+    
+    if (!user || !user.password) {
+      console.log("Auth: No user or no password");
+      return null;
+    }
 
+    console.log("Auth: Verifying password...");
     const valid = await verifyPassword(password, user.password);
+    console.log("Auth: Password valid:", valid);
+    
     if (!valid) return null;
 
     const token = await createToken(user.id);
@@ -206,7 +215,6 @@ export async function getUserFromToken(
         email: users.email,
         name: users.name,
         image: users.image,
-        emailVerified: users.emailVerified,
       })
       .from(users)
       .where(eq(users.id, userId))

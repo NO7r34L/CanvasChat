@@ -10,13 +10,6 @@ export const users = pgTable("user", {
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").unique().notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   password: text("password"), // Hashed password for JWT auth
-  createdAt: timestamp("createdAt", { mode: "date" })
-    .notNull()
-    .$defaultFn(() => new Date()),
-  updatedAt: timestamp("updatedAt", { mode: "date" })
-    .notNull()
-    .$defaultFn(() => new Date()),
 });

@@ -6,7 +6,10 @@ export async function POST(request: Request) {
     const body = await request.json() as { email?: string; password?: string };
     const { email, password } = body;
 
+    console.log("Sign in attempt for:", email);
+
     if (!email || !password) {
+      console.log("Missing email or password");
       return NextResponse.json(
         { error: "Email and password are required" },
         { status: 400 }
@@ -14,6 +17,7 @@ export async function POST(request: Request) {
     }
 
     const result = await signIn(email, password);
+    console.log("Sign in result:", result ? "success" : "failed");
 
     if (!result) {
       return NextResponse.json(
