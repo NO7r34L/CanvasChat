@@ -85,7 +85,7 @@ body {
 }
 
 /* Ensure main content is above animated background */
-body > *:not(#animated-gradient-bg):not(#blur-overlay) {
+body > *:not(#animated-gradient-bg) {
     position: relative;
     z-index: 10;
 }

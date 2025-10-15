@@ -15,7 +15,7 @@
     `;
     document.head.appendChild(style);
 
-    // Create gradient background
+    // Create gradient background with blur
     const gradientBg = document.createElement('div');
     gradientBg.id = 'animated-gradient-bg';
     gradientBg.style.cssText = `
@@ -37,32 +37,17 @@
         );
         background-size: 400% 400%;
         animation: gradientMove 30s ease-in-out infinite;
-    `;
-
-    // Create blur layer
-    const blurLayer = document.createElement('div');
-    blurLayer.id = 'blur-overlay';
-    blurLayer.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-        backdrop-filter: blur(120px);
-        -webkit-backdrop-filter: blur(120px);
-        pointer-events: none;
+        filter: blur(80px);
+        opacity: 0.9;
     `;
 
     // Insert into document
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             document.body.insertBefore(gradientBg, document.body.firstChild);
-            document.body.insertBefore(blurLayer, document.body.firstChild.nextSibling);
         });
     } else {
         document.body.insertBefore(gradientBg, document.body.firstChild);
-        document.body.insertBefore(blurLayer, document.body.firstChild.nextSibling);
     }
 })();
 
