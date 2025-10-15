@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ai-chat-template-cloudflare-assistant-ui-neon",
+  "name": "canvas-chat",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -31,7 +31,7 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["CanvasSession"]
+      "new_sqlite_classes": ["CanvasSession"]
     }
   ],
   /**

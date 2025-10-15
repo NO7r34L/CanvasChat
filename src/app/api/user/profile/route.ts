@@ -6,7 +6,8 @@ import { stackServerApp } from "@/lib/stack/server";
  * This demonstrates the pattern for creating API routes that work with TanStack Query
  */
 
-export const runtime = "edge";
+// Removed edge runtime for OpenNext Cloudflare compatibility
+// export const runtime = "edge";
 
 export async function GET() {
   try {
