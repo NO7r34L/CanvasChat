@@ -161,8 +161,22 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
       if (!response.ok) throw new Error("Failed to save canvas");
 
       const data = await response.json();
+      const canvasId = data.id;
+
+      // Save version history (for existing canvases)
+      if (currentCanvasId) {
+        await fetch(`/api/canvas/${currentCanvasId}/history`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fabricData }),
+        }).catch((error) => {
+          console.error("Error saving version:", error);
+          // Don't fail the save if version history fails
+        });
+      }
+
       set({
-        currentCanvasId: data.id,
+        currentCanvasId: canvasId,
         lastSaved: new Date(),
       });
     } catch (error) {
