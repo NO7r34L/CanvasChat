@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanvasChat - Screen Navigator</title>
+    <link rel="stylesheet" href="shared/styles.css">
+    <style>
+        body {
+            padding: 3rem 1.5rem;
+            background: linear-gradient(135deg, #FF4A04 0%, #FF6B35 50%, #FBAE41 100%);
+            min-height: 100vh;
+        }
+
+        .navigator {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navigator-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .navigator-header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .navigator-header p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+        }
+
+        .screen-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .screen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .screen-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.2s;
+        }
+
+        .screen-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .screen-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .screen-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .screen-route {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+            margin-bottom: 1rem;
+        }
+
+        .screen-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .screen-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .screen-features li {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .screen-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="navigator">
+        <header class="navigator-header">
+            <h1>🎨 CanvasChat Screens</h1>
+            <p>Complete HTML mockups for all application screens</p>
+        </header>
+
+        <!-- Public Screens -->
+        <section class="screen-section">
+            <h2 class="section-title">Public Screens (Unauthenticated)</h2>
+            <div class="screen-grid">
+                <div class="screen-card">
+                    <div class="screen-icon">🏠</div>
+                    <h3 class="screen-name">Landing Page</h3>
+                    <div class="screen-route">/</div>
+                    <p class="screen-description">
+                        Marketing homepage showcasing CanvasChat features and benefits.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Hero section with CTA</li>
+                        <li>6 feature cards</li>
+                        <li>Call-to-action section</li>
+                        <li>Responsive design</li>
+                    </ul>
+                    <a href="public/landing.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">🔐</div>
+                    <h3 class="screen-name">Login</h3>
+                    <div class="screen-route">/login</div>
+                    <p class="screen-description">
+                        User authentication with email/password and OAuth providers.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Email & password login</li>
+                        <li>GitHub OAuth</li>
+                        <li>Google OAuth</li>
+                        <li>Forgot password link</li>
+                    </ul>
+                    <a href="public/login.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">✍️</div>
+                    <h3 class="screen-name">Sign Up</h3>
+                    <div class="screen-route">/signup</div>
+                    <p class="screen-description">
+                        New user registration with multiple authentication options.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Name, email & password</li>
+                        <li>GitHub OAuth</li>
+                        <li>Google OAuth</li>
+                        <li>Terms acceptance</li>
+                    </ul>
+                    <a href="public/signup.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logged-In Screens -->
+        <section class="screen-section">
+            <h2 class="section-title">Logged-In Screens (Authenticated)</h2>
+            <div class="screen-grid">
+                <div class="screen-card">
+                    <div class="screen-icon">🎨</div>
+                    <h3 class="screen-name">Canvas Workspace</h3>
+                    <div class="screen-route">/canvas</div>
+                    <p class="screen-description">
+                        Main canvas interface with drawing tools and animations.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Fabric.js canvas (1000x600)</li>
+                        <li>5 drawing tools</li>
+                        <li>Color picker & brush width</li>
+                        <li>Animation presets</li>
+                        <li>Undo/redo/clear</li>
+                    </ul>
+                    <a href="logged-in/canvas.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">🖼️</div>
+                    <h3 class="screen-name">Gallery</h3>
+                    <div class="screen-route">/gallery</div>
+                    <p class="screen-description">
+                        User's canvas collection with filtering and search.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Grid layout</li>
+                        <li>Filter buttons</li>
+                        <li>Canvas thumbnails</li>
+                        <li>Quick actions</li>
+                        <li>Empty state</li>
+                    </ul>
+                    <a href="logged-in/gallery.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">⚙️</div>
+                    <h3 class="screen-name">Profile Settings</h3>
+                    <div class="screen-route">/profile</div>
+                    <p class="screen-description">
+                        User profile, preferences, and account management.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Profile information</li>
+                        <li>Preferences (4 toggles)</li>
+                        <li>Security settings</li>
+                        <li>Delete account</li>
+                    </ul>
+                    <a href="logged-in/profile.html" class="btn btn-primary w-full" target="_blank">View Screen</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation -->
+        <section class="screen-section">
+            <h2 class="section-title">Documentation</h2>
+            <div class="screen-grid">
+                <div class="screen-card">
+                    <div class="screen-icon">📚</div>
+                    <h3 class="screen-name">Screen Documentation</h3>
+                    <div class="screen-route">README.md</div>
+                    <p class="screen-description">
+                        Comprehensive documentation for all screens, navigation flows, and React conversion notes.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Screen descriptions</li>
+                        <li>Feature lists</li>
+                        <li>Navigation flows</li>
+                        <li>Integration notes</li>
+                    </ul>
+                    <a href="README.md" class="btn btn-primary w-full" target="_blank">Read Docs</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">🎨</div>
+                    <h3 class="screen-name">Shared Styles</h3>
+                    <div class="screen-route">shared/styles.css</div>
+                    <p class="screen-description">
+                        Shared CSS variables, components, and utilities used across all screens.
+                    </p>
+                    <ul class="screen-features">
+                        <li>CSS custom properties</li>
+                        <li>Reusable components</li>
+                        <li>Utility classes</li>
+                        <li>Responsive helpers</li>
+                    </ul>
+                    <a href="shared/styles.css" class="btn btn-primary w-full" target="_blank">View Styles</a>
+                </div>
+
+                <div class="screen-card">
+                    <div class="screen-icon">🗺️</div>
+                    <h3 class="screen-name">Navigation Flow</h3>
+                    <div class="screen-route">Flow Diagram</div>
+                    <p class="screen-description">
+                        Visual representation of user flows and screen transitions.
+                    </p>
+                    <ul class="screen-features">
+                        <li>Landing → Sign Up → Canvas</li>
+                        <li>Landing → Login → Canvas</li>
+                        <li>Canvas ↔ Gallery</li>
+                        <li>Canvas ↔ Profile</li>
+                    </ul>
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-sm); font-size: 0.875rem; font-family: monospace;">
+                        Landing → Auth → Canvas<br>
+                        Canvas ↔ Gallery ↔ Profile
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p style="font-weight: 600; margin-bottom: 0.5rem;">CanvasChat HTML Mockups</p>
+            <p style="opacity: 0.9;">Ready for React conversion with Stack Auth & Fabric.js</p>
+            <div class="footer-links">
+                <a href="../README.md">Project README</a>
+                <a href="../.cursor/rules/project-architecture.mdc">Architecture</a>
+                <a href="../.cursor/rules/canvas-animations.mdc">Canvas Docs</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+
