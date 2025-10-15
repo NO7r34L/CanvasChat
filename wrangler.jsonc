@@ -16,24 +16,25 @@
     "enabled": true,
   },
   /**
-   * Durable Objects
+   * Durable Objects - Temporarily disabled for initial deployment
+   * Will be enabled in a future update with proper bundling
    * https://developers.cloudflare.com/durable-objects/
    */
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "CANVAS_SESSION",
-        "class_name": "CanvasSession",
-        "script_name": "canvas-chat"
-      }
-    ]
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["CanvasSession"]
-    }
-  ],
+  // "durable_objects": {
+  //   "bindings": [
+  //     {
+  //       "name": "CANVAS_SESSION",
+  //       "class_name": "CanvasSession",
+  //       "script_name": "canvas-chat"
+  //     }
+  //   ]
+  // },
+  // "migrations": [
+  //   {
+  //     "tag": "v1",
+  //     "new_sqlite_classes": ["CanvasSession"]
+  //   }
+  // ],
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
