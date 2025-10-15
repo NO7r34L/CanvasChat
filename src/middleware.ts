@@ -39,7 +39,18 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|_next/data|favicon.ico|auth/signin|auth/signup|api/auth).*)",
+    /*
+     * Match all request paths except:
+     * - / (root/landing page)
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - _next/data (data fetching)
+     * - favicon.ico (favicon)
+     * - auth pages
+     * - api/auth routes
+     * - public assets (png, jpg, svg, etc.)
+     */
+    "/((?!$|_next/static|_next/image|_next/data|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)|auth|api/auth).*)",
   ],
 };
 
