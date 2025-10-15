@@ -4,7 +4,7 @@ alwaysApply: true
 
 # Project Architecture
 
-This is a full-stack Next.js application deployed on Cloudflare Workers with the following architecture:
+This is a canvas-based chat application deployed on Cloudflare Workers with the following architecture:
 
 ## Tech Stack
 
@@ -12,7 +12,8 @@ This is a full-stack Next.js application deployed on Cloudflare Workers with the
 - **Runtime**: Cloudflare Workers via OpenNext
 - **Database**: Neon PostgreSQL with Drizzle ORM
 - **Authentication**: Stack Auth (via @stackframe/stack)
-- **AI Chat**: Assistant UI with Vercel AI SDK
+- **Canvas**: Fabric.js v6.7.1 for object manipulation
+- **Animations**: Anime.js v4.2.2 for smooth transitions
 - **State Management**: TanStack Query v5.90.3 (server state) + Zustand v5.0.8 (client state)
 - **Styling**: Tailwind CSS v4 + Shadcn UI (New York style)
 - **Type Safety**: TypeScript with strict mode
@@ -21,22 +22,26 @@ This is a full-stack Next.js application deployed on Cloudflare Workers with the
 ## Project Structure
 
 - [src/app/](mdc:src/app/) - Next.js App Router pages and API routes
-  - [src/app/api/chat/route.ts](mdc:src/app/api/chat/route.ts) - Main chat API endpoint
   - [src/app/api/user/profile/route.ts](mdc:src/app/api/user/profile/route.ts) - User profile API
-  - [src/app/page.tsx](mdc:src/app/page.tsx) - Main chat interface (protected route)
+  - [src/app/canvas/page.tsx](mdc:src/app/canvas/page.tsx) - Canvas chat interface
+  - [src/app/page.tsx](mdc:src/app/page.tsx) - Home (redirects to canvas)
   - [src/app/layout.tsx](mdc:src/app/layout.tsx) - Root layout with providers (QueryProvider, StackProvider)
 - [src/components/](mdc:src/components/) - React components
-  - [src/components/assistant-ui/](mdc:src/components/assistant-ui/) - Custom Assistant UI components
+  - [src/components/canvas-chat.tsx](mdc:src/components/canvas-chat.tsx) - Main canvas component
+  - [src/components/canvas-toolbar.tsx](mdc:src/components/canvas-toolbar.tsx) - Tool controls
+  - [src/components/canvas-animations.tsx](mdc:src/components/canvas-animations.tsx) - Animation presets
+  - [src/components/canvas-page.tsx](mdc:src/components/canvas-page.tsx) - Canvas page layout
   - [src/components/ui/](mdc:src/components/ui/) - Shadcn UI components
 - [src/lib/](mdc:src/lib/) - Shared utilities and configurations
   - [src/lib/providers.tsx](mdc:src/lib/providers.tsx) - QueryClient provider setup
-  - [src/lib/assistant.tsx](mdc:src/lib/assistant.tsx) - Assistant UI runtime setup
+  - [src/lib/canvas-utils.ts](mdc:src/lib/canvas-utils.ts) - Animation utilities
   - [src/lib/db/](mdc:src/lib/db/) - Database schema and client
   - [src/lib/stack/](mdc:src/lib/stack/) - Stack Auth configuration
   - [src/lib/utils.ts](mdc:src/lib/utils.ts) - Utility functions (cn helper)
 - [src/hooks/](mdc:src/hooks/) - Custom React hooks
-  - [src/hooks/use-user-profile.ts](mdc:src/hooks/use-user-profile.ts) - Example TanStack Query hook
+  - [src/hooks/use-user-profile.ts](mdc:src/hooks/use-user-profile.ts) - TanStack Query hook example
 - [src/stores/](mdc:src/stores/) - Zustand stores for client state
+  - [src/stores/canvas-store.ts](mdc:src/stores/canvas-store.ts) - Canvas state (tools, colors, selection)
   - [src/stores/ui-store.ts](mdc:src/stores/ui-store.ts) - UI state (sidebar, modals, theme)
   - [src/stores/chat-store.ts](mdc:src/stores/chat-store.ts) - Chat preferences and UI state
 
@@ -44,13 +49,14 @@ This is a full-stack Next.js application deployed on Cloudflare Workers with the
 
 1. **Server Components by Default**: Use server components unless client interactivity is needed
 2. **Authentication**: All protected routes use `stackServerApp.getUser({ or: "redirect" })`
-3. **AI Chat**: Powered by Assistant UI Cloud for persistence and Vercel AI SDK for streaming
+3. **Canvas Chat**: Powered by Fabric.js for rendering and Anime.js for animations
 4. **Database**: Drizzle ORM with Neon's serverless driver
 5. **State Management**:
    - TanStack Query for server state (API data, caching, synchronization)
-   - Zustand for client state (UI state, preferences, ephemeral data)
+   - Zustand for client state (UI state, canvas state, preferences, ephemeral data)
    - See [state-management.mdc](mdc:.cursor/rules/state-management.mdc) for patterns
-6. **Deployment**: OpenNext for Cloudflare Workers compatibility
+6. **Canvas Animations**: See [canvas-animations.mdc](mdc:.cursor/rules/canvas-animations.mdc) for API
+7. **Deployment**: OpenNext for Cloudflare Workers compatibility
 
 ## Import Aliases
 
@@ -73,4 +79,30 @@ The app is wrapped in the following provider order (in [layout.tsx](mdc:src/app/
     </StackTheme>
   </StackProvider>
 </QueryProvider>
+```
+
+## Canvas Store Usage
+
+```typescript
+import { useCanvasStore } from "@/stores/canvas-store";
+
+// Access canvas state
+const { canvas, activeTool, brushColor, selectedObject } = useCanvasStore();
+
+// Update tool
+setActiveTool("draw");
+
+// Update brush
+setBrushColor("#FF0000");
+setBrushWidth(5);
+```
+
+## Animation Utilities
+
+```typescript
+import { animatePulse, animateBounce } from "@/lib/canvas-utils";
+
+// Animate canvas objects
+animatePulse(object, canvas, { duration: 600 });
+animateBounce(object, canvas, 50, { duration: 600 });
 ```

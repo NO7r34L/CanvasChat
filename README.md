@@ -1,17 +1,42 @@
-# AI Chat Template: Cloudflare, Assistant UI, Neon
+# CanvasChat
 
-A modern, production-ready template for building full-stack React applications using Next.js on Cloudflare with Assistant UI and Neon.
+Interactive canvas chat application with real-time drawing, animations, and collaborative features powered by Fabric.js and Anime.js.
 
 ## Tech Stack
 
-- **Runtime**: Cloudflare Workers via OpenNext
 - **Framework**: Next.js 15 with React 19
+- **Runtime**: Cloudflare Workers via OpenNext
 - **Database**: Neon PostgreSQL with Drizzle ORM
 - **Authentication**: Stack Auth
-- **AI Chat**: Assistant UI with Vercel AI SDK
-- **State Management**: TanStack Query (server state) + Zustand (client state)
+- **Canvas**: Fabric.js v6.7.1 for object manipulation
+- **Animations**: Anime.js v4.2.2 for smooth transitions
+- **State Management**: TanStack Query v5.90.3 (server) + Zustand v5.0.8 (client)
 - **Styling**: Tailwind CSS v4 + Shadcn UI
 - **Package Manager**: Bun 1.3
+
+## Features
+
+### Canvas Tools
+- **Select** - Object manipulation and selection
+- **Draw** - Free drawing with configurable brush (color, width)
+- **Text** - Add and edit text on canvas
+- **Shape** - Create geometric shapes
+- **Erase** - Remove objects
+
+### Animation Presets
+- **Pulse** - Scale up and down effect
+- **Bounce** - Vertical bounce animation
+- **Shake** - Horizontal shake effect
+- **Rotate** - 360° rotation
+- **Scale** - Dynamic scaling
+- **Custom** - Build your own with Anime.js API
+
+### Real-time Features
+- Object selection and manipulation
+- Smooth animations at 60fps
+- Undo/redo support
+- Clear canvas
+- Export/import capabilities
 
 ## Getting Started
 
@@ -37,29 +62,12 @@ cp example.env .env
 
 ### Set up Neon
 
-We use Neon for Storage (Postgres) and Authentication. The schema is currently very simple and only includes the users_sync table but we can expand for agent memory and application data. [Drizzle](https://orm.drizzle.team/) is used for database schema management.
+We use Neon for Storage (Postgres) and Authentication.
 
-First, sign up for a Neon account and create a new project: [Neon](https://neon.com/signup)
-
-Next, enable Neon Auth by navigating to Configuration > Environment Variables > Next.js and copy the variables to the `.env` file, replacing the placeholder values.
-
-### Set up Assistant UI Cloud
-
-We use Assistant UI for AI chat functionality and Assistant UI Cloud for persisting the chat history.
-
-Sign up for a Assistant UI Cloud account and create a new project: [Assistant UI Cloud](https://cloud.assistant-ui.com/)
-
-From there, copy the project base URL and project slug and add them to the `.env` file. Optionally, you can also generate an API key and add it to the `.env` file. This is not required for the base setup of this template but useful for additional features.
-
-### Model Provider Setup
-
-This template uses Vercel's AI SDK and Assistant UI for model serving. The `example.env` file has OpenAI set as the provider. Other providers are also supported. Refer to the [AI SDK Providers documentation](https://ai-sdk.dev/docs/foundations/providers-and-models) for more information.
-
-Create a new API key for your preferred provider and add it to the `.env` file.
-
-```txt
-OPENAI_API_KEY=your_openai_api_key
-```
+1. Sign up for a Neon account: [Neon](https://neon.com/signup)
+2. Create a new project
+3. Enable Neon Auth: Configuration > Environment Variables > Next.js
+4. Copy the variables to the `.env` file
 
 ### Installation
 
@@ -77,83 +85,167 @@ Run the development server:
 bun run dev
 ```
 
-Your application will be available at `http://localhost:3000`.
+Your application will be available at `http://localhost:3000` and will redirect to `/canvas`.
+
+## Canvas API
+
+### Animation Utilities
+
+```typescript
+import {
+  animatePosition,
+  animateScale,
+  animateRotation,
+  animatePulse,
+  animateBounce,
+} from "@/lib/canvas-utils";
+
+// Animate object position
+animatePosition(object, canvas, 200, 300, { duration: 500 });
+
+// Pulse animation
+animatePulse(object, canvas, { duration: 600 });
+```
+
+### Canvas Store
+
+```typescript
+import { useCanvasStore } from "@/stores/canvas-store";
+
+// Access canvas state
+const { canvas, activeTool, brushColor } = useCanvasStore();
+
+// Update tool
+useCanvasStore.getState().setActiveTool("draw");
+```
+
+### Creating Objects
+
+```typescript
+import { Rect, Circle, IText } from "fabric";
+
+// Add rectangle
+const rect = new Rect({
+  left: 100,
+  top: 100,
+  width: 200,
+  height: 100,
+  fill: "#4A90E2",
+});
+canvas.add(rect);
+
+// Add text
+const text = new IText("Hello World", {
+  left: 100,
+  top: 100,
+  fontSize: 24,
+});
+canvas.add(text);
+```
+
+## Deployment
 
 ### Deploying Secrets
 
-Then run the following command to sync the secrets from the `.env` file to Cloudflare:
+Sync secrets from the `.env` file to Cloudflare:
 
 ```bash
 wrangler secret bulk .env
 ```
 
-## Previewing the Production Build
-
-Preview the production build locally:
+### Preview Production Build
 
 ```bash
 bun run preview
 ```
 
-## Building for Production
-
-Create a production build:
+### Building for Production
 
 ```bash
 bun run build
 ```
 
-## Deployment
-
-Deployment is done using the Wrangler CLI.
-
-To build and deploy directly to production:
+### Deploy to Cloudflare Workers
 
 ```bash
 bun run deploy
 ```
 
-To deploy a preview URL:
+Or deploy a preview version:
 
 ```bash
 bunx wrangler versions upload
-```
-
-You can then promote a version to production after verification or roll it out progressively.
-
-```bash
 bunx wrangler versions deploy
 ```
 
-## Add Worker URL to Neon Auth Trusted Domains
+### Post-Deployment
 
-After deploying to Cloudflare Workers for the first time, copy the URL of your app and add it to the Neon Auth trusted domains in your Neon project > Auth > Configuration > Domains section. This enables Neon Auth to redirect back to your app after authentication.
+After first deployment:
+1. Copy your Cloudflare Workers URL
+2. Add URL to Neon Auth trusted domains:
+   - Navigate to your Neon project
+   - Go to Auth > Configuration > Domains
+   - Add your Workers URL
 
 ## State Management
 
-This project uses a dual state management approach:
+### TanStack Query (Server State)
+- API data fetching and caching
+- Automatic background refetching
+- Optimistic updates
+- Request deduplication
 
-- **TanStack Query v5.90.3** - Server state, data fetching, caching, and synchronization
-- **Zustand v5.0.8** - Client state, UI state, and user preferences
+### Zustand (Client State)
+- UI state (sidebar, modals, theme)
+- Canvas state (tools, colors, selection)
+- Persistent state with localStorage
 
-See the [state management documentation](.cursor/rules/state-management.mdc) for detailed patterns and examples.
+See [state management documentation](.cursor/rules/state-management.mdc) for patterns.
 
-## Canvas & Animations
+## Project Structure
 
-Interactive canvas chat powered by:
+```
+src/
+├── app/
+│   ├── api/user/profile/     # User profile API
+│   ├── canvas/               # Canvas chat page
+│   ├── layout.tsx            # Root layout with providers
+│   └── page.tsx              # Home (redirects to canvas)
+├── components/
+│   ├── canvas-chat.tsx       # Main canvas component
+│   ├── canvas-toolbar.tsx    # Tool controls
+│   ├── canvas-animations.tsx # Animation presets
+│   ├── canvas-page.tsx       # Canvas page layout
+│   └── ui/                   # Shadcn UI components
+├── lib/
+│   ├── canvas-utils.ts       # Animation utilities
+│   ├── providers.tsx         # QueryClient provider
+│   ├── db/                   # Database schema
+│   └── stack/                # Stack Auth config
+├── hooks/
+│   └── use-user-profile.ts   # TanStack Query hooks
+└── stores/
+    ├── canvas-store.ts       # Canvas state
+    ├── ui-store.ts           # UI state
+    └── chat-store.ts         # Chat preferences
+```
 
-- **Fabric.js v6.7.1** - HTML5 canvas library for object manipulation
-- **Anime.js v4.2.2** - Lightweight animation library for smooth transitions
+## Documentation
 
-Features:
-- Drawing tools (pen, shapes, text)
-- Object manipulation and selection
-- Preset animations (pulse, bounce, shake, rotate)
-- Custom animation support
-- Real-time rendering
+- [Canvas & Animations](.cursor/rules/canvas-animations.mdc) - Complete API guide
+- [State Management](.cursor/rules/state-management.mdc) - TanStack Query & Zustand patterns
+- [Database Patterns](.cursor/rules/database-patterns.mdc) - Drizzle ORM usage
+- [Deployment](.cursor/rules/deployment.mdc) - Cloudflare Workers deployment
 
-Access the canvas interface at `/canvas`. See the [canvas documentation](.cursor/rules/canvas-animations.mdc) for API and usage patterns.
+## Resources
 
-## Styling
+- [Fabric.js Documentation](http://fabricjs.com/docs/)
+- [Anime.js Documentation](https://animejs.com/documentation/)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Zustand](https://docs.pmnd.rs/zustand)
+- [Next.js 15](https://nextjs.org/docs)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
 
-This template comes with [Shadcn UI](https://ui.shadcn.com/) and [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+## License
+
+MIT
