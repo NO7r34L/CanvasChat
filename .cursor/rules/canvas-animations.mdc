@@ -1,0 +1,284 @@
+---
+description: Canvas chat with Fabric.js and Anime.js animations
+---
+
+# Canvas Chat & Animations
+
+This project includes a canvas-based chat interface powered by Fabric.js for rendering and Anime.js for smooth animations.
+
+## Libraries
+
+- **Fabric.js v6.7.1** - HTML5 canvas library for object manipulation
+- **Anime.js v4.2.2** - Lightweight JavaScript animation library
+
+## Architecture
+
+### Canvas Store (`src/stores/canvas-store.ts`)
+
+Zustand store managing canvas state:
+
+```typescript
+import { useCanvasStore } from "@/stores/canvas-store";
+
+// Access canvas state
+const { canvas, activeTool, brushColor, selectedObject } = useCanvasStore();
+
+// Update tool
+useCanvasStore.getState().setActiveTool("draw");
+```
+
+**State Properties:**
+- `canvas` - Fabric.js canvas instance
+- `activeTool` - Current tool (select, draw, text, shape, erase)
+- `brushColor` - Drawing brush color
+- `brushWidth` - Drawing brush width
+- `animationEnabled` - Toggle animations
+- `selectedObject` - Currently selected canvas object
+
+### Animation Utilities (`src/lib/canvas-utils.ts`)
+
+Pre-built animation functions using Anime.js:
+
+```typescript
+import {
+  animatePosition,
+  animateScale,
+  animateRotation,
+  animatePulse,
+  animateBounce,
+  animateShake,
+  animateFadeInScale,
+} from "@/lib/canvas-utils";
+
+// Animate object position
+animatePosition(obj, canvas, 200, 300, { duration: 500 });
+
+// Pulse animation
+animatePulse(obj, canvas, { duration: 600 });
+
+// Bounce animation
+animateBounce(obj, canvas, 50, { duration: 600 });
+```
+
+**Available Animations:**
+- `animatePosition` - Move object to coordinates
+- `animateScale` - Scale object
+- `animateRotation` - Rotate object
+- `animateOpacity` - Fade in/out
+- `animatePulse` - Scale up and down
+- `animateBounce` - Vertical bounce
+- `animateShake` - Horizontal shake
+- `animateFadeInScale` - Entrance animation
+- `animateFadeOutScale` - Exit animation
+- `animateSequence` - Staggered animations
+
+## Components
+
+### CanvasChat Component
+
+Main canvas component with Fabric.js integration:
+
+```typescript
+import { CanvasChat } from "@/components/canvas-chat";
+
+export function MyPage() {
+  return (
+    <CanvasChat 
+      width={1200} 
+      height={800}
+      className="border-2"
+    />
+  );
+}
+```
+
+**Features:**
+- Auto-initializes Fabric.js canvas
+- Drawing mode support
+- Object selection
+- Automatic animation on object creation
+
+### CanvasToolbar Component
+
+Provides canvas tools and controls:
+
+```typescript
+import { CanvasToolbar } from "@/components/canvas-toolbar";
+
+// Includes:
+// - Tool selection (select, draw, text, shape, erase)
+// - Brush color picker
+// - Brush width slider
+// - Animation toggle
+// - Undo/redo buttons
+// - Clear canvas
+```
+
+### CanvasAnimations Component
+
+Animation presets for selected objects:
+
+```typescript
+import { CanvasAnimations } from "@/components/canvas-animations";
+
+// Provides:
+// - Pulse, bounce, shake animations
+// - Rotation, scaling controls
+// - Reset transform
+// - Delete selected object
+```
+
+## Usage Patterns
+
+### Creating a Canvas Object
+
+```typescript
+import { Rect, Circle, IText } from "fabric";
+import { useCanvasStore } from "@/stores/canvas-store";
+import { animateFadeInScale } from "@/lib/canvas-utils";
+
+function addRectangle() {
+  const canvas = useCanvasStore.getState().canvas;
+  if (!canvas) return;
+
+  const rect = new Rect({
+    left: 100,
+    top: 100,
+    width: 200,
+    height: 100,
+    fill: "#4A90E2",
+  });
+
+  canvas.add(rect);
+  animateFadeInScale(rect, canvas);
+}
+
+function addCircle() {
+  const canvas = useCanvasStore.getState().canvas;
+  if (!canvas) return;
+
+  const circle = new Circle({
+    left: 200,
+    top: 200,
+    radius: 50,
+    fill: "#E24A4A",
+  });
+
+  canvas.add(circle);
+}
+
+function addText() {
+  const canvas = useCanvasStore.getState().canvas;
+  if (!canvas) return;
+
+  const text = new IText("Hello World", {
+    left: 100,
+    top: 100,
+    fontSize: 24,
+    fill: "#000000",
+  });
+
+  canvas.add(text);
+}
+```
+
+### Custom Animations
+
+```typescript
+import anime from "animejs";
+
+function customAnimation(obj: FabricObject, canvas: Canvas) {
+  anime({
+    targets: obj,
+    left: 300,
+    top: 200,
+    scaleX: 1.5,
+    scaleY: 1.5,
+    angle: 360,
+    opacity: [0, 1],
+    duration: 1000,
+    easing: "easeOutElastic(1, .8)",
+    update: () => {
+      canvas.requestRenderAll();
+    },
+  });
+}
+```
+
+### Timeline Animations
+
+```typescript
+import { createTimeline } from "@/lib/canvas-utils";
+
+function sequentialAnimation() {
+  const canvas = useCanvasStore.getState().canvas;
+  if (!canvas) return;
+
+  const objects = canvas.getObjects();
+  
+  const timeline = createTimeline();
+  
+  objects.forEach((obj, index) => {
+    timeline.add({
+      targets: obj,
+      scaleX: 1.2,
+      scaleY: 1.2,
+      duration: 300,
+      update: () => canvas.requestRenderAll(),
+    }, index * 100); // Stagger by 100ms
+  });
+}
+```
+
+### Event Handling
+
+```typescript
+const canvas = useCanvasStore.getState().canvas;
+
+// Object selection
+canvas?.on("selection:created", (e) => {
+  console.log("Selected:", e.selected);
+});
+
+// Object modification
+canvas?.on("object:modified", (e) => {
+  console.log("Modified:", e.target);
+});
+
+// Mouse events
+canvas?.on("mouse:down", (e) => {
+  console.log("Mouse down at:", e.pointer);
+});
+```
+
+## Best Practices
+
+1. **Always check canvas exists** before operations
+2. **Call `canvas.requestRenderAll()`** after manual object changes
+3. **Use animations sparingly** - toggle `animationEnabled` for performance
+4. **Dispose canvas** in component cleanup
+5. **Store object references** in Zustand for complex interactions
+
+## Canvas Page
+
+Access the canvas interface at `/canvas`:
+
+```typescript
+// Navigate to canvas
+<Link href="/canvas">Open Canvas Chat</Link>
+```
+
+## Performance Tips
+
+- Disable animations for bulk operations
+- Use `canvas.renderOnAddRemove = false` for batch adds
+- Call `canvas.requestRenderAll()` once after batch operations
+- Consider object pooling for frequently created/destroyed objects
+- Use `canvas.discardActiveObject()` to deselect before deletion
+
+## Resources
+
+- [Fabric.js Documentation](http://fabricjs.com/docs/)
+- [Anime.js Documentation](https://animejs.com/documentation/)
+- [Canvas Store](mdc:src/stores/canvas-store.ts)
+- [Animation Utilities](mdc:src/lib/canvas-utils.ts)

@@ -2,14 +2,29 @@
 
 A modern, production-ready template for building full-stack React applications using Next.js on Cloudflare with Assistant UI and Neon.
 
+## Tech Stack
+
+- **Runtime**: Cloudflare Workers via OpenNext
+- **Framework**: Next.js 15 with React 19
+- **Database**: Neon PostgreSQL with Drizzle ORM
+- **Authentication**: Stack Auth
+- **AI Chat**: Assistant UI with Vercel AI SDK
+- **State Management**: TanStack Query (server state) + Zustand (client state)
+- **Styling**: Tailwind CSS v4 + Shadcn UI
+- **Package Manager**: Bun 1.3
+
 ## Getting Started
 
-### Wrangler CLI
+### Prerequisites
 
-Make sure you have the latest version of the wrangler CLI installed.
+Make sure you have Bun 1.3+ and Wrangler CLI installed:
 
 ```bash
-npm install -g wrangler
+# Install Bun (if not already installed)
+curl -fsSL https://bun.sh/install | bash
+
+# Install Wrangler globally
+bun install -g wrangler
 ```
 
 ### Environment Variables
@@ -51,7 +66,7 @@ OPENAI_API_KEY=your_openai_api_key
 Install the dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 ### Development
@@ -59,7 +74,7 @@ npm install
 Run the development server:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 Your application will be available at `http://localhost:3000`.
@@ -77,7 +92,7 @@ wrangler secret bulk .env
 Preview the production build locally:
 
 ```bash
-npm run preview
+bun run preview
 ```
 
 ## Building for Production
@@ -85,7 +100,7 @@ npm run preview
 Create a production build:
 
 ```bash
-npm run build
+bun run build
 ```
 
 ## Deployment
@@ -94,25 +109,50 @@ Deployment is done using the Wrangler CLI.
 
 To build and deploy directly to production:
 
-```sh
-npm run deploy
+```bash
+bun run deploy
 ```
 
 To deploy a preview URL:
 
-```sh
-npx wrangler versions upload
+```bash
+bunx wrangler versions upload
 ```
 
 You can then promote a version to production after verification or roll it out progressively.
 
-```sh
-npx wrangler versions deploy
+```bash
+bunx wrangler versions deploy
 ```
 
 ## Add Worker URL to Neon Auth Trusted Domains
 
 After deploying to Cloudflare Workers for the first time, copy the URL of your app and add it to the Neon Auth trusted domains in your Neon project > Auth > Configuration > Domains section. This enables Neon Auth to redirect back to your app after authentication.
+
+## State Management
+
+This project uses a dual state management approach:
+
+- **TanStack Query v5.90.3** - Server state, data fetching, caching, and synchronization
+- **Zustand v5.0.8** - Client state, UI state, and user preferences
+
+See the [state management documentation](.cursor/rules/state-management.mdc) for detailed patterns and examples.
+
+## Canvas & Animations
+
+Interactive canvas chat powered by:
+
+- **Fabric.js v6.7.1** - HTML5 canvas library for object manipulation
+- **Anime.js v4.2.2** - Lightweight animation library for smooth transitions
+
+Features:
+- Drawing tools (pen, shapes, text)
+- Object manipulation and selection
+- Preset animations (pulse, bounce, shake, rotate)
+- Custom animation support
+- Real-time rendering
+
+Access the canvas interface at `/canvas`. See the [canvas documentation](.cursor/rules/canvas-animations.mdc) for API and usage patterns.
 
 ## Styling
 

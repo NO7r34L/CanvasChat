@@ -59,7 +59,7 @@ export function Button({ className, ...props }: ButtonProps) {
 ## Shadcn UI Components
 
 - Located in [src/components/ui/](mdc:src/components/ui/)
-- Use Shadcn CLI to add new components: `npx shadcn@latest add [component]`
+- Use Shadcn CLI to add new components: `bunx shadcn@latest add [component]`
 - Configuration in [components.json](mdc:components.json):
   - Style: "new-york"
   - Base color: "neutral"

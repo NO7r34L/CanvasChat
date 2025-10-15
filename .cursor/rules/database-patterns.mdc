@@ -90,21 +90,21 @@ Drizzle Kit is configured in [drizzle.config.ts](mdc:drizzle.config.ts).
 
 ```bash
 # Generate migration from schema changes
-npm run db:generate
+bun run db:generate
 
 # Run migrations
-npm run db:migrate
+bun run db:migrate
 
 # Open Drizzle Studio (database GUI)
-npm run db:studio
+bun run db:studio
 ```
 
 ### Migration Workflow
 
 1. Update schema in `src/lib/db/schema.ts`
-2. Run `npm run db:generate` to create migration
+2. Run `bun run db:generate` to create migration
 3. Review migration in `migrations/` directory
-4. Run `npm run db:migrate` to apply migration
+4. Run `bun run db:migrate` to apply migration
 5. Commit schema and migration files together
 
 ## Type Safety

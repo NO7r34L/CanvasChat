@@ -16,7 +16,7 @@ This project deploys to Cloudflare Workers using OpenNext.
 
 ```bash
 # Local development with Turbopack
-npm run dev
+bun run dev
 
 # Access at http://localhost:3000
 ```
@@ -25,30 +25,30 @@ npm run dev
 
 ```bash
 # Build and preview with Cloudflare Workers environment
-npm run preview
+bun run preview
 ```
 
 ## Deploy to Production
 
 ```bash
 # Build and deploy directly to production
-npm run deploy
+bun run deploy
 ```
 
 ## Deploy Preview Version
 
 ```bash
 # Upload a new version without promoting to production
-npx wrangler versions upload
+bunx wrangler versions upload
 
 # View versions
-npx wrangler versions list
+bunx wrangler versions list
 
 # Promote a version to production
-npx wrangler versions deploy
+bunx wrangler versions deploy
 
 # Or deploy with progressive rollout
-npx wrangler versions deploy --percentage 10
+bunx wrangler versions deploy --percentage 10
 ```
 
 ## Environment Variables & Secrets
@@ -103,7 +103,7 @@ After first deployment:
 Make sure you have the latest Wrangler:
 
 ```bash
-npm install -g wrangler
+bun install -g wrangler
 
 # Login to Cloudflare
 wrangler login
@@ -120,7 +120,7 @@ wrangler deployments list
 Generate Cloudflare environment types:
 
 ```bash
-npm run cf-typegen
+bun run cf-typegen
 ```
 
 This updates [cloudflare-env.d.ts](mdc:cloudflare-env.d.ts) with proper types for environment variables.

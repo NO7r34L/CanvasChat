@@ -1,0 +1,345 @@
+---
+description: State management patterns with TanStack Query and Zustand
+---
+
+# State Management
+
+This project uses a dual state management approach:
+
+- **TanStack Query (React Query)** - Server state management
+- **Zustand** - Client/UI state management
+
+## Package Versions
+
+- `@tanstack/react-query@5.90.3` (latest)
+- `zustand@5.0.8` (latest)
+
+## TanStack Query (Server State)
+
+Use TanStack Query for all server-side data fetching, caching, and synchronization.
+
+### Setup
+
+The Query Client should be configured in the root layout or a provider component:
+
+```typescript
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000, // 1 minute
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+```
+
+### Basic Usage
+
+```typescript
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+// Fetch data
+function UsersComponent() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const response = await fetch("/api/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
+      return response.json();
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      {data.map((user) => (
+        <div key={user.id}>{user.name}</div>
+      ))}
+    </div>
+  );
+}
+
+// Mutate data
+function CreateUserComponent() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (newUser: { name: string; email: string }) => {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
+      if (!response.ok) throw new Error("Failed to create user");
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate and refetch users query
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
+  return (
+    <button onClick={() => mutation.mutate({ name: "John", email: "john@example.com" })}>
+      {mutation.isPending ? "Creating..." : "Create User"}
+    </button>
+  );
+}
+```
+
+### Advanced Patterns
+
+```typescript
+// Dependent queries
+function UserPostsComponent({ userId }: { userId: string }) {
+  const { data: user } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetchUser(userId),
+  });
+
+  const { data: posts } = useQuery({
+    queryKey: ["posts", userId],
+    queryFn: () => fetchUserPosts(userId),
+    enabled: !!user, // Only run when user is available
+  });
+
+  return <div>{/* ... */}</div>;
+}
+
+// Infinite queries
+function InfinitePostsComponent() {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["posts", "infinite"],
+    queryFn: ({ pageParam = 0 }) => fetchPosts(pageParam),
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    initialPageParam: 0,
+  });
+
+  return (
+    <div>
+      {data?.pages.map((page) =>
+        page.posts.map((post) => <div key={post.id}>{post.title}</div>)
+      )}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      >
+        {isFetchingNextPage ? "Loading more..." : "Load More"}
+      </button>
+    </div>
+  );
+}
+
+// Optimistic updates
+function UpdatePostComponent({ postId }: { postId: string }) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updatePost,
+    onMutate: async (newPost) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["post", postId] });
+
+      // Snapshot previous value
+      const previousPost = queryClient.getQueryData(["post", postId]);
+
+      // Optimistically update
+      queryClient.setQueryData(["post", postId], newPost);
+
+      return { previousPost };
+    },
+    onError: (err, newPost, context) => {
+      // Rollback on error
+      queryClient.setQueryData(["post", postId], context?.previousPost);
+    },
+    onSettled: () => {
+      // Refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+    },
+  });
+
+  return <div>{/* ... */}</div>;
+}
+```
+
+## Zustand (Client State)
+
+Use Zustand for client-side UI state, user preferences, and ephemeral state.
+
+### Basic Store
+
+```typescript
+import { create } from "zustand";
+
+interface UIStore {
+  sidebarOpen: boolean;
+  theme: "light" | "dark";
+  toggleSidebar: () => void;
+  setTheme: (theme: "light" | "dark") => void;
+}
+
+export const useUIStore = create<UIStore>((set) => ({
+  sidebarOpen: false,
+  theme: "light",
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+  setTheme: (theme) => set({ theme }),
+}));
+```
+
+### Usage in Components
+
+```typescript
+"use client";
+
+import { useUIStore } from "@/stores/ui-store";
+
+export function SidebarToggle() {
+  const { sidebarOpen, toggleSidebar } = useUIStore();
+
+  return (
+    <button onClick={toggleSidebar}>
+      {sidebarOpen ? "Close" : "Open"} Sidebar
+    </button>
+  );
+}
+
+// Selective subscription (only re-renders when sidebarOpen changes)
+export function SidebarStatus() {
+  const sidebarOpen = useUIStore((state) => state.sidebarOpen);
+  return <div>Sidebar is {sidebarOpen ? "open" : "closed"}</div>;
+}
+```
+
+### Advanced Patterns
+
+```typescript
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+
+// Persisted store (localStorage)
+interface PreferencesStore {
+  fontSize: number;
+  language: string;
+  setFontSize: (size: number) => void;
+  setLanguage: (lang: string) => void;
+}
+
+export const usePreferencesStore = create<PreferencesStore>()(
+  persist(
+    (set) => ({
+      fontSize: 16,
+      language: "en",
+      setFontSize: (fontSize) => set({ fontSize }),
+      setLanguage: (language) => set({ language }),
+    }),
+    {
+      name: "user-preferences",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+// Immer middleware for complex state updates
+interface TodoStore {
+  todos: { id: string; text: string; completed: boolean }[];
+  addTodo: (text: string) => void;
+  toggleTodo: (id: string) => void;
+  removeTodo: (id: string) => void;
+}
+
+export const useTodoStore = create<TodoStore>()(
+  immer((set) => ({
+    todos: [],
+    addTodo: (text) =>
+      set((state) => {
+        state.todos.push({
+          id: crypto.randomUUID(),
+          text,
+          completed: false,
+        });
+      }),
+    toggleTodo: (id) =>
+      set((state) => {
+        const todo = state.todos.find((t) => t.id === id);
+        if (todo) todo.completed = !todo.completed;
+      }),
+    removeTodo: (id) =>
+      set((state) => {
+        state.todos = state.todos.filter((t) => t.id !== id);
+      }),
+  }))
+);
+```
+
+## When to Use Which?
+
+### Use TanStack Query for:
+
+- Fetching data from APIs
+- Server state synchronization
+- Caching and background updates
+- Pagination and infinite scrolling
+- Optimistic updates for server data
+- Request deduplication
+
+### Use Zustand for:
+
+- UI state (modals, sidebars, dropdowns)
+- User preferences
+- Form state (when not using React Hook Form)
+- Client-side filters and sorting
+- Temporary/ephemeral state
+- Cross-component communication
+
+## Integration Pattern
+
+Often you'll use both together:
+
+```typescript
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useUIStore } from "@/stores/ui-store";
+
+export function UserDashboard() {
+  // Server state with TanStack Query
+  const { data: user } = useQuery({
+    queryKey: ["user", "current"],
+    queryFn: fetchCurrentUser,
+  });
+
+  // Client state with Zustand
+  const { sidebarOpen, selectedTab } = useUIStore();
+
+  return (
+    <div>
+      <Sidebar open={sidebarOpen} />
+      <MainContent user={user} activeTab={selectedTab} />
+    </div>
+  );
+}
+```
+
+## Resources
+
+- [TanStack Query Docs](https://tanstack.com/query/latest)
+- [Zustand Docs](https://docs.pmnd.rs/zustand/getting-started/introduction)
