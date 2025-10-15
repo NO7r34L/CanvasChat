@@ -6,26 +6,35 @@
     <title>CanvasChat - Interactive Canvas Collaboration</title>
     <link rel="icon" type="image/png" href="../shared/assets/CanvasChat.logo.png">
     <link rel="stylesheet" href="../shared/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/4.2.2/anime.min.js"></script>
     <style>
         .hero {
             min-height: calc(100vh - 72px);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #FF4A04 0%, #FF6B35 50%, #FBAE41 100%);
-            color: white;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 1) 0%, 
+                rgba(249, 250, 251, 1) 50%, 
+                rgba(243, 244, 246, 1) 100%
+            );
+            color: var(--text-primary);
             text-align: center;
             padding: 4rem 1.5rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .hero-content {
             max-width: 800px;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 2px solid var(--border-color);
             border-radius: var(--radius-lg);
             padding: 3rem 2rem;
             backdrop-filter: blur(10px);
-            background: rgba(255,255,255,0.1);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 10;
         }
 
         .hero h1 {
@@ -38,7 +47,7 @@
         .hero p {
             font-size: 1.5rem;
             margin-bottom: 2.5rem;
-            opacity: 0.95;
+            color: var(--text-secondary);
         }
 
         .hero-buttons {
@@ -136,17 +145,21 @@
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
             color: white;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
         .cta-section .container {
             max-width: 700px;
             margin: 0 auto;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
             border-radius: var(--radius-lg);
             padding: 3rem 2rem;
             backdrop-filter: blur(10px);
             background: rgba(255,255,255,0.1);
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
         }
 
         .cta-section h2 {
@@ -259,6 +272,9 @@
             <p style="opacity: 0.8;">© 2025 CanvasChat. Built with Fabric.js & Anime.js</p>
         </div>
     </footer>
+
+    <!-- Animated Background -->
+    <script src="../shared/animated-bg.js"></script>
 
     <!-- UI Debug Tool -->
     <script src="../shared/debug-tool.js"></script>

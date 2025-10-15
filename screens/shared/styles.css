@@ -61,6 +61,18 @@
     --warning-light: #FEF3C7;
     --error: #EF4444;
     --error-light: #FEE2E2;
+    
+    /* Z-Index Scale */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 300;
+    --z-overlay: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+    --z-notification: 800;
+    --z-debug: 999;
 }
 
 body {
@@ -72,10 +84,30 @@ body {
 
 /* Header */
 .header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-    color: white;
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--text-primary);
     padding: 1rem 1.5rem;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: var(--z-header);
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(249, 250, 251, 0.9) 50%, 
+        rgba(243, 244, 246, 0.9) 100%
+    );
+    z-index: -1;
 }
 
 .header-content {
@@ -93,18 +125,20 @@ body {
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    color: white;
+    color: var(--text-primary);
+    position: relative;
+    z-index: var(--z-base);
 }
 
 .logo-icon {
     width: 36px;
     height: 36px;
-    background: white;
+    background: var(--primary-color);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: white;
     font-weight: bold;
 }
 
@@ -147,12 +181,13 @@ body {
 
 .btn-ghost {
     background: transparent;
-    color: white;
-    border: 2px solid white;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
 }
 
 .btn-ghost:hover {
-    background: rgba(255,255,255,0.1);
+    background: var(--bg-tertiary);
+    border-color: var(--border-dark);
 }
 
 .btn-lg {

@@ -23,7 +23,7 @@
         font-size: 14px;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 999999;
+        z-index: 999;
         transition: transform 0.2s, box-shadow 0.2s;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
@@ -80,7 +80,7 @@
                         font-size: 10px;
                         padding: 2px 6px;
                         border-radius: 3px;
-                        z-index: 999998;
+                        z-index: 998;
                         font-family: monospace;
                         pointer-events: none;
                     }
