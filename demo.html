@@ -426,7 +426,7 @@
         <header class="header">
             <div class="header-left">
                 <div class="logo">
-                    <img src="CanvasChat.logowithtext.png" alt="CanvasChat" style="height: 36px; filter: brightness(0) invert(1);">
+                    <img src="CanvasChat.logowithtext.png" alt="CanvasChat" style="height: 80px; filter: brightness(0) invert(1);">
                 </div>
             </div>
             <div class="user-profile">
@@ -809,6 +809,39 @@
             canvas.add(welcomeText);
             animateFadeIn(welcomeText);
         }, 500);
+    </script>
+
+    <!-- UI Debug Tool -->
+    <script>
+        // Inline debug tool for root demo.html
+        (function() {
+            let debugMode = false;
+            const button = document.createElement('button');
+            button.id = 'debug-toggle';
+            button.innerHTML = '🔲 Toggle Outlines';
+            button.style.cssText = `position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 999999; transition: transform 0.2s, box-shadow 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;`;
+            button.onmouseover = function() { this.style.transform = 'translateY(-2px)'; this.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)'; };
+            button.onmouseout = function() { this.style.transform = 'translateY(0)'; this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)'; };
+            button.onclick = function() {
+                debugMode = !debugMode;
+                if (debugMode) {
+                    if (!document.getElementById('debug-styles')) {
+                        const style = document.createElement('style');
+                        style.id = 'debug-styles';
+                        style.textContent = `* { outline: 1px solid rgba(255, 0, 0, 0.3) !important; } div { outline-color: rgba(255, 0, 0, 0.5) !important; } section { outline: 2px solid rgba(0, 255, 0, 0.6) !important; } header { outline: 2px solid rgba(0, 0, 255, 0.6) !important; } main { outline: 2px solid rgba(255, 165, 0, 0.6) !important; } aside { outline: 2px solid rgba(255, 255, 0, 0.6) !important; } canvas { outline: 3px solid rgba(255, 0, 255, 0.9) !important; }`;
+                        document.head.appendChild(style);
+                    }
+                    button.innerHTML = '✅ Outlines ON';
+                    button.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+                } else {
+                    const style = document.getElementById('debug-styles');
+                    if (style) style.remove();
+                    button.innerHTML = '🔲 Toggle Outlines';
+                    button.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
+            };
+            document.body.appendChild(button);
+        })();
     </script>
 </body>
 </html>
