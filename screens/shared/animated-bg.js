@@ -1,151 +1,68 @@
 /**
- * Animated Background with Anime.js
- * Floating gradient orbs behind blur layer
+ * Animated Background with CSS Gradients
+ * Slow moving gradient with blur overlay
  */
 
 (function() {
-    // Wait for anime.js to be available
-    if (typeof anime === 'undefined') {
-        console.warn('Anime.js not loaded - animated background disabled');
-        return;
-    }
+    // Add keyframe animation to document
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    `;
+    document.head.appendChild(style);
 
-    // Create animated background container
-    const bgContainer = document.createElement('div');
-    bgContainer.id = 'animated-bg';
-    bgContainer.style.cssText = `
+    // Create gradient background
+    const gradientBg = document.createElement('div');
+    gradientBg.id = 'animated-gradient-bg';
+    gradientBg.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
+        right: 0;
+        bottom: 0;
         z-index: 0;
-        pointer-events: none;
+        background: linear-gradient(
+            270deg,
+            #F9FAFB,
+            #E5E7EB,
+            #D1D5DB,
+            #A78BFA,
+            #6B46C1,
+            #D1D5DB,
+            #F3F4F6
+        );
+        background-size: 400% 400%;
+        animation: gradientMove 30s ease-in-out infinite;
     `;
 
     // Create blur layer
     const blurLayer = document.createElement('div');
+    blurLayer.id = 'blur-overlay';
     blurLayer.style.cssText = `
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        backdrop-filter: blur(60px);
-        -webkit-backdrop-filter: blur(60px);
-        z-index: 100;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        backdrop-filter: blur(120px);
+        -webkit-backdrop-filter: blur(120px);
+        pointer-events: none;
     `;
-
-    // Color palette - subtle grays and whites with hint of purple
-    const colors = [
-        'rgba(249, 250, 251, 0.8)',  // Very light gray
-        'rgba(243, 244, 246, 0.9)',  // Light gray
-        'rgba(229, 231, 235, 0.7)',  // Medium gray
-        'rgba(209, 213, 219, 0.6)',  // Darker gray
-        'rgba(107, 70, 193, 0.4)',   // Purple hint
-        'rgba(167, 139, 250, 0.5)',  // Light purple hint
-    ];
-
-    // Create floating orbs
-    const orbCount = 8;
-    const orbs = [];
-
-    for (let i = 0; i < orbCount; i++) {
-        const orb = document.createElement('div');
-        const size = Math.random() * 300 + 200; // 200-500px
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        
-        orb.className = 'floating-orb';
-        orb.style.cssText = `
-            position: absolute;
-            width: ${size}px;
-            height: ${size}px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, ${color}, transparent);
-            left: ${x}px;
-            top: ${y}px;
-            opacity: 0.9;
-            mix-blend-mode: normal;
-            filter: blur(40px);
-        `;
-        
-        bgContainer.appendChild(orb);
-        orbs.push(orb);
-    }
-
-    // Add blur layer on top
-    bgContainer.appendChild(blurLayer);
 
     // Insert into document
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            document.body.insertBefore(bgContainer, document.body.firstChild);
-            animateOrbs();
+            document.body.insertBefore(gradientBg, document.body.firstChild);
+            document.body.insertBefore(blurLayer, document.body.firstChild.nextSibling);
         });
     } else {
-        document.body.insertBefore(bgContainer, document.body.firstChild);
-        animateOrbs();
+        document.body.insertBefore(gradientBg, document.body.firstChild);
+        document.body.insertBefore(blurLayer, document.body.firstChild.nextSibling);
     }
-
-    // Animate orbs
-    function animateOrbs() {
-        orbs.forEach((orb, index) => {
-            // Create unique animation for each orb
-            const duration = 15000 + Math.random() * 10000; // 15-25 seconds
-            const delay = index * 500; // Stagger start
-            
-            // Random movement path
-            const moveDistance = 100 + Math.random() * 200;
-            const angle = Math.random() * Math.PI * 2;
-            
-            anime({
-                targets: orb,
-                translateX: [
-                    { value: Math.cos(angle) * moveDistance, duration: duration / 2 },
-                    { value: 0, duration: duration / 2 }
-                ],
-                translateY: [
-                    { value: Math.sin(angle) * moveDistance, duration: duration / 2 },
-                    { value: 0, duration: duration / 2 }
-                ],
-                scale: [
-                    { value: 1.2, duration: duration / 2 },
-                    { value: 1, duration: duration / 2 }
-                ],
-                opacity: [
-                    { value: 0.8, duration: duration / 3 },
-                    { value: 0.4, duration: duration / 3 },
-                    { value: 0.6, duration: duration / 3 }
-                ],
-                easing: 'easeInOutQuad',
-                delay: delay,
-                loop: true
-            });
-        });
-    }
-
-    // Responsive - recreate orbs on resize
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-            // Reposition orbs smoothly
-            orbs.forEach(orb => {
-                const newX = Math.random() * window.innerWidth;
-                const newY = Math.random() * window.innerHeight;
-                
-                anime({
-                    targets: orb,
-                    left: newX,
-                    top: newY,
-                    duration: 1000,
-                    easing: 'easeInOutQuad'
-                });
-            });
-        }, 250);
-    });
 })();
 

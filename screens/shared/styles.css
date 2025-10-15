@@ -85,9 +85,9 @@ body {
 }
 
 /* Ensure main content is above animated background */
-body > * {
+body > *:not(#animated-gradient-bg):not(#blur-overlay) {
     position: relative;
-    z-index: var(--z-base);
+    z-index: 10;
 }
 
 /* Header */
