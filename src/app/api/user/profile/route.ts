@@ -7,8 +7,6 @@ import { cookies } from "next/headers";
  * Compatible with Cloudflare Workers Edge Runtime
  */
 
-export const runtime = "edge";
-
 export async function GET() {
   try {
     // Get authenticated user from JWT token

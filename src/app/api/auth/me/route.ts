@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getUserFromToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 
-export const runtime = "edge";
-
 export async function GET() {
   try {
     const cookieStore = await cookies();

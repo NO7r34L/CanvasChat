@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { signUp } from "@/lib/auth";
 
-export const runtime = "edge";
-
 export async function POST(request: Request) {
   try {
     const body = await request.json() as { email?: string; password?: string; name?: string };
