@@ -36,7 +36,7 @@
             #F3F4F6
         );
         background-size: 400% 400%;
-        animation: gradientMove 30s ease-in-out infinite;
+        animation: gradientMove 120s ease-in-out infinite;
         filter: blur(80px);
         opacity: 0.9;
     `;
