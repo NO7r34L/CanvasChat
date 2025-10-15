@@ -300,7 +300,7 @@ export function createTimeline() {
  * Export canvas as PNG blob
  */
 export async function exportCanvasAsPNG(canvas: Canvas): Promise<Blob> {
-  const dataUrl = canvas.toDataURL({ format: "png", quality: 1 });
+  const dataUrl = canvas.toDataURL({ format: "png", quality: 1 } as any);
   const response = await fetch(dataUrl);
   return response.blob();
 }

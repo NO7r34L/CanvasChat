@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { prompt } = await req.json();
+    const body = await req.json() as { prompt?: string };
+    const { prompt } = body;
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json(

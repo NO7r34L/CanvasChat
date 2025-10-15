@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const body = await req.json() as { name: string };
 
     const team = await db
       .insert(teamsTable)

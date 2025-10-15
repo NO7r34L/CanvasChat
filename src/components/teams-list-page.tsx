@@ -47,7 +47,7 @@ export function TeamsListPage() {
       });
 
       if (response.ok) {
-        const team = await response.json();
+        const team = await response.json() as { id: number; name: string };
         setOpen(false);
         setTeamName("");
         refetch();

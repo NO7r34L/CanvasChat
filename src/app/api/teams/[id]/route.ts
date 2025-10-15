@@ -83,7 +83,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const teamId = parseInt(id);
-    const body = await req.json();
+    const body = await req.json() as { name: string };
 
     // Check permissions
     if (!(await isTeamOwnerOrAdmin(teamId, user.id))) {

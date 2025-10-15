@@ -54,7 +54,15 @@ export async function PUT(
   try {
     const { id } = await params;
     const canvasId = parseInt(id);
-    const body = await req.json();
+    const body = await req.json() as {
+      title?: string;
+      fabricData?: string;
+      thumbnail?: string;
+      width?: number;
+      height?: number;
+      isPublic?: boolean;
+      isFavorite?: boolean;
+    };
 
     const updated = await db
       .update(canvasesTable)

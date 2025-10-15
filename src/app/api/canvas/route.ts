@@ -34,7 +34,15 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const body = await req.json() as {
+      title: string;
+      fabricData: string;
+      thumbnail?: string;
+      width?: number;
+      height?: number;
+      isPublic?: boolean;
+      isFavorite?: boolean;
+    };
 
     const canvas = await db
       .insert(canvasesTable)

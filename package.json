@@ -52,7 +52,7 @@
     "@stackframe/stack": "^2.8.41",
     "@tanstack/react-query": "^5.90.3",
     "ai": "^5.0.71",
-    "animejs": "^4.2.2",
+    "animejs": "^3.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -82,6 +82,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/animejs": "^3.1.13",
     "@types/fabric": "^5.3.10",
     "@types/node": "^20.19.19",
     "@types/react": "^19",

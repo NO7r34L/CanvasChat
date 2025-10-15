@@ -76,7 +76,11 @@ export async function POST(
   try {
     const { id } = await params;
     const canvasId = parseInt(id);
-    const body = await req.json();
+    const body = await req.json() as {
+      content: string;
+      positionX: number;
+      positionY: number;
+    };
 
     // Check access
     if (!(await hasCanvasAccess(canvasId, user.id))) {

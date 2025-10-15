@@ -64,7 +64,7 @@ export async function POST(
   try {
     const { id } = await params;
     const canvasId = parseInt(id);
-    const body = await req.json();
+    const body = await req.json() as { fabricData: string };
 
     // Verify canvas ownership
     const canvas = await db

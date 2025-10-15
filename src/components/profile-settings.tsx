@@ -66,8 +66,8 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
 
   const handleDeleteAccount = async () => {
     // TODO: Implement account deletion
-    await user.signOut();
-    router.push("/");
+    // await user.signOut();
+    window.location.href = '/handler/sign-out';
   };
 
   const getInitials = () => {

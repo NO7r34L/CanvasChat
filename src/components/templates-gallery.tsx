@@ -48,7 +48,7 @@ export function TemplatesGallery() {
       });
 
       if (response.ok) {
-        const canvas = await response.json();
+        const canvas = await response.json() as { id: number };
         router.push(`/canvas?id=${canvas.id}`);
       }
     } catch (error) {

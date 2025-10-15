@@ -36,7 +36,7 @@ export function AIDrawingTool() {
 
       if (!response.ok) throw new Error("Failed to generate drawing");
 
-      const data = await response.json();
+      const data = await response.json() as { svgPath: string; prompt: string };
 
       // Create a Path object from the SVG path data
       const path = new Path(data.svgPath, {

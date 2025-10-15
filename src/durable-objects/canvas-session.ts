@@ -30,7 +30,7 @@ export class CanvasSession implements DurableObject {
   private sessions: Map<string, Session>;
   private cursors: Map<string, CursorPosition>;
 
-  constructor(state: DurableObjectState, env: Env) {
+  constructor(state: DurableObjectState, env: unknown) {
     this.state = state;
     this.sessions = new Map();
     this.cursors = new Map();

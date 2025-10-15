@@ -141,7 +141,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
 
     try {
       const fabricData = JSON.stringify(canvas.toJSON());
-      const thumbnail = canvas.toDataURL({ format: "png", quality: 0.5 });
+      const thumbnail = canvas.toDataURL({ format: "png", quality: 0.5 } as any);
 
       const response = await fetch(
         currentCanvasId ? `/api/canvas/${currentCanvasId}` : "/api/canvas",
@@ -160,7 +160,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
 
       if (!response.ok) throw new Error("Failed to save canvas");
 
-      const data = await response.json();
+      const data = await response.json() as { id: number };
       const canvasId = data.id;
 
       // Save version history (for existing canvases)
@@ -195,7 +195,12 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
       const response = await fetch(`/api/canvas/${id}`);
       if (!response.ok) throw new Error("Failed to load canvas");
 
-      const data = await response.json();
+      const data = await response.json() as {
+        id: number;
+        title: string;
+        fabricData: string;
+        updatedAt: string;
+      };
 
       // Clear current canvas
       canvas.clear();

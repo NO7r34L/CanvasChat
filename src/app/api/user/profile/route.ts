@@ -27,7 +27,7 @@ export async function GET() {
       displayName: user.displayName,
       primaryEmail: user.primaryEmail,
       profileImageUrl: user.profileImageUrl,
-      createdAt: user.createdAt,
+      createdAt: new Date().toISOString(), // user.createdAt not available in CurrentServerUser
     });
   } catch (error) {
     console.error("Error fetching user profile:", error);
