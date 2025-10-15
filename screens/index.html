@@ -74,6 +74,24 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08;
+            z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .screen-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .screen-card:hover {
@@ -81,10 +99,10 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .screen-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .screen-card:hover::before {
+            opacity: 0.15;
         }
+
 
         .screen-name {
             font-size: 1.25rem;
@@ -120,7 +138,7 @@
         }
 
         .screen-features li::before {
-            content: '✓';
+            content: '•';
             position: absolute;
             left: 0;
             color: var(--primary-color);
@@ -166,7 +184,6 @@
             <h2 class="section-title">Public Screens (Unauthenticated)</h2>
             <div class="screen-grid">
                 <div class="screen-card">
-                    <div class="screen-icon">🏠</div>
                     <h3 class="screen-name">Landing Page</h3>
                     <div class="screen-route">/</div>
                     <p class="screen-description">
@@ -182,7 +199,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">🔐</div>
                     <h3 class="screen-name">Login</h3>
                     <div class="screen-route">/login</div>
                     <p class="screen-description">
@@ -198,7 +214,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">✍️</div>
                     <h3 class="screen-name">Sign Up</h3>
                     <div class="screen-route">/signup</div>
                     <p class="screen-description">
@@ -220,7 +235,6 @@
             <h2 class="section-title">Logged-In Screens (Authenticated)</h2>
             <div class="screen-grid">
                 <div class="screen-card">
-                    <div class="screen-icon">🎨</div>
                     <h3 class="screen-name">Canvas Workspace</h3>
                     <div class="screen-route">/canvas</div>
                     <p class="screen-description">
@@ -237,7 +251,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">🖼️</div>
                     <h3 class="screen-name">Gallery</h3>
                     <div class="screen-route">/gallery</div>
                     <p class="screen-description">
@@ -254,7 +267,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">⚙️</div>
                     <h3 class="screen-name">Profile Settings</h3>
                     <div class="screen-route">/profile</div>
                     <p class="screen-description">
@@ -276,7 +288,6 @@
             <h2 class="section-title">Documentation</h2>
             <div class="screen-grid">
                 <div class="screen-card">
-                    <div class="screen-icon">📚</div>
                     <h3 class="screen-name">Screen Documentation</h3>
                     <div class="screen-route">README.md</div>
                     <p class="screen-description">
@@ -292,7 +303,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">🎨</div>
                     <h3 class="screen-name">Shared Styles</h3>
                     <div class="screen-route">shared/styles.css</div>
                     <p class="screen-description">
@@ -308,7 +318,6 @@
                 </div>
 
                 <div class="screen-card">
-                    <div class="screen-icon">🗺️</div>
                     <h3 class="screen-name">Navigation Flow</h3>
                     <div class="screen-route">Flow Diagram</div>
                     <p class="screen-description">
@@ -345,6 +354,30 @@
 
     <!-- UI Debug Tool -->
     <script src="shared/debug-tool.js"></script>
+
+    <script>
+        // Apply random background images to screen cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = [
+                'shared/assets/Runpod-generated-image (1).jpeg',
+                'shared/assets/Runpod-generated-image (2).jpeg',
+                'shared/assets/Runpod-generated-image (3).jpeg',
+                'shared/assets/Runpod-generated-image (4).jpeg'
+            ];
+            
+            const cards = document.querySelectorAll('.screen-card');
+            cards.forEach((card, index) => {
+                const randomImage = images[index % images.length];
+                const style = document.createElement('style');
+                style.textContent = `
+                    .screen-card:nth-of-type(${(index % 3) + 1}):nth-child(${index + 1})::before {
+                        background-image: url('${randomImage}');
+                    }
+                `;
+                document.head.appendChild(style);
+            });
+        });
+    </script>
 </body>
 </html>
 

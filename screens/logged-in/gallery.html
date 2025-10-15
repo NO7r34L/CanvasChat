@@ -59,6 +59,8 @@
             width: 100%;
             aspect-ratio: 16/10;
             background: var(--bg-tertiary);
+            background-size: cover;
+            background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -97,11 +99,6 @@
             text-align: center;
         }
 
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
 
         .empty-state h2 {
             font-size: 1.5rem;
@@ -183,7 +180,6 @@
 
         <!-- Empty State (shown when no canvases) -->
         <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="empty-icon">🎨</div>
             <h2>No canvases yet</h2>
             <p>Start creating your first masterpiece</p>
             <a href="canvas.html" class="btn btn-primary btn-lg">Create First Canvas</a>
@@ -191,14 +187,22 @@
     </main>
 
     <script>
+        // Background images for cards
+        const backgroundImages = [
+            '../shared/assets/Runpod-generated-image (1).jpeg',
+            '../shared/assets/Runpod-generated-image (2).jpeg',
+            '../shared/assets/Runpod-generated-image (3).jpeg',
+            '../shared/assets/Runpod-generated-image (4).jpeg'
+        ];
+
         // Sample data
         const canvases = [
-            { id: 1, title: 'Untitled Canvas', date: '2 hours ago', icon: '✏️' },
-            { id: 2, title: 'My Masterpiece', date: 'Yesterday', icon: '🎨' },
-            { id: 3, title: 'Quick Sketch', date: '3 days ago', icon: '✨' },
-            { id: 4, title: 'Project Design', date: '1 week ago', icon: '🖌️' },
-            { id: 5, title: 'Brainstorm', date: '2 weeks ago', icon: '💡' },
-            { id: 6, title: 'Wireframe', date: '1 month ago', icon: '📐' },
+            { id: 1, title: 'Untitled Canvas', date: '2 hours ago' },
+            { id: 2, title: 'My Masterpiece', date: 'Yesterday' },
+            { id: 3, title: 'Quick Sketch', date: '3 days ago' },
+            { id: 4, title: 'Project Design', date: '1 week ago' },
+            { id: 5, title: 'Brainstorm', date: '2 weeks ago' },
+            { id: 6, title: 'Wireframe', date: '1 month ago' },
         ];
 
         function renderGallery() {
@@ -209,18 +213,21 @@
                 grid.style.display = 'none';
                 emptyState.style.display = 'block';
             } else {
-                grid.innerHTML = canvases.map(canvas => `
-                    <div class="canvas-card" onclick="openCanvas(${canvas.id})">
-                        <div class="canvas-thumbnail">${canvas.icon}</div>
-                        <div class="canvas-info">
-                            <div class="canvas-title">${canvas.title}</div>
-                            <div class="canvas-meta">
-                                <span class="canvas-date">📅 ${canvas.date}</span>
-                                <span>⋯</span>
+                grid.innerHTML = canvases.map((canvas, index) => {
+                    const bgImage = backgroundImages[index % backgroundImages.length];
+                    return `
+                        <div class="canvas-card" onclick="openCanvas(${canvas.id})">
+                            <div class="canvas-thumbnail" style="background-image: url('${bgImage}')"></div>
+                            <div class="canvas-info">
+                                <div class="canvas-title">${canvas.title}</div>
+                                <div class="canvas-meta">
+                                    <span class="canvas-date">${canvas.date}</span>
+                                    <span>⋯</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 

@@ -73,20 +73,23 @@
             border: 2px solid var(--border-color);
             transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
         }
 
         .feature-card::before {
             content: '';
             position: absolute;
-            inset: -3px;
-            border-radius: var(--radius-md);
-            padding: 3px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
             transition: opacity 0.3s ease;
+        }
+
+        .feature-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .feature-card:hover {
@@ -96,7 +99,7 @@
         }
 
         .feature-card:hover::before {
-            opacity: 1;
+            opacity: 0.25;
         }
 
         .feature-icon {
@@ -217,7 +220,7 @@
     <!-- Features Section -->
     <section class="features" id="features">
         <h2 class="section-title">Powerful Features</h2>
-        <div class="features-grid">
+        <div class="features-grid" id="featuresGrid">
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -316,6 +319,31 @@
 
     <!-- UI Debug Tool -->
     <script src="../shared/debug-tool.js"></script>
+
+    <script>
+        // Apply random background images to feature cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = [
+                '../shared/assets/Runpod-generated-image (1).jpeg',
+                '../shared/assets/Runpod-generated-image (2).jpeg',
+                '../shared/assets/Runpod-generated-image (3).jpeg',
+                '../shared/assets/Runpod-generated-image (4).jpeg'
+            ];
+            
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach((card, index) => {
+                const randomImage = images[index % images.length];
+                // Create a style element for pseudo-element
+                const style = document.createElement('style');
+                style.textContent = `
+                    .feature-card:nth-child(${index + 1})::before {
+                        background-image: url('${randomImage}');
+                    }
+                `;
+                document.head.appendChild(style);
+            });
+        });
+    </script>
 </body>
 </html>
 
